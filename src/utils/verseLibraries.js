@@ -1,15 +1,26 @@
-function createNativeFunction(name, parameters, returnType, invoke) {
+import { VerseFailure } from './verseFailure.js';
+
+function createNativeFunction(name, parameters, returnType, invoke, effects = []) {
 	return {
 		metadata: {
 			type: 'NativeFunction',
 			name,
 			parameters,
 			returnType,
+			effects,
 		},
 		runtime: {
 			invoke,
 		},
 	};
+}
+
+function convertFailableFloatToInt(name, value, convert) {
+	if (!Number.isFinite(value)) {
+		throw new VerseFailure(`${name}[${value}] failed: value is not finite`);
+	}
+
+	return convert(value);
 }
 
 function shuffleArray(values) {
@@ -65,6 +76,51 @@ const VERSE_LIBRARY_REGISTRY = {
 	},
 	'/UnrealEngine.com/Temporary/Diagnostics': {
 		exports: {},
+	},
+	'/Verse.org/Verse': {
+		exports: {
+			Floor: createNativeFunction(
+				'Floor',
+				['float'],
+				'int',
+				value => convertFailableFloatToInt('Floor', value, Math.floor),
+				['decides'],
+			),
+			Ceil: createNativeFunction(
+				'Ceil',
+				['float'],
+				'int',
+				value => convertFailableFloatToInt('Ceil', value, Math.ceil),
+				['decides'],
+			),
+			Round: createNativeFunction(
+				'Round',
+				['float'],
+				'int',
+				value => convertFailableFloatToInt('Round', value, Math.round),
+				['decides'],
+			),
+			Int: createNativeFunction(
+				'Int',
+				['float'],
+				'int',
+				value => convertFailableFloatToInt('Int', value, Math.trunc),
+				['decides'],
+			),
+			Mod: createNativeFunction(
+				'Mod',
+				['int', 'int'],
+				'int',
+				(dividend, divisor) => {
+					if (divisor === 0) {
+						throw new VerseFailure(`Mod[${dividend}, ${divisor}] failed: division by zero`);
+					}
+
+					return ((dividend % divisor) + divisor) % divisor;
+				},
+				['decides'],
+			),
+		},
 	},
 };
 
