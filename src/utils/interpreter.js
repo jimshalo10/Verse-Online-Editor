@@ -5,6 +5,7 @@
 // The AST is then used by this interpreter to execute the program logic.
 
 import { getImportedRuntimeBindings, getImportedSymbols } from './verseLibraries.js';
+import { VerseFailure } from './verseFailure.js';
 
 export class VerseInterpreter {
 	constructor() {
@@ -254,7 +255,17 @@ export class VerseInterpreter {
 	}
 
 	visitIfStatement(ifStatement) {
-		const condition = this.evaluateExpression(ifStatement.condition);
+		let condition;
+		try {
+			condition = this.evaluateExpression(ifStatement.condition);
+		}
+		catch (error) {
+			if (!(error instanceof VerseFailure)) {
+				throw error;
+			}
+			condition = false;
+		}
+
 		if (condition !== null && condition) {
 			for (const statement of ifStatement.body) {
 				this.visitStatement(statement);
@@ -336,7 +347,7 @@ export class VerseInterpreter {
 
 			const index = this.evaluateExpression(arrayAccess.index);
 			if (index < 0 || index >= array.value.length) {
-				throw new Error(`Index out of bounds: ${index}`);
+				throw new VerseFailure(`Index out of bounds: ${index}`);
 			}
 
 			const newValue = this.evaluateExpression(setStatement.value);
@@ -471,6 +482,20 @@ export class VerseInterpreter {
 	}
 
 	evaluateBinaryExpression(expression) {
+		if (expression.operator === 'or') {
+			let left;
+			try {
+				left = this.evaluateExpression(expression.left);
+			}
+			catch (error) {
+				if (!(error instanceof VerseFailure)) {
+					throw error;
+				}
+				return this.evaluateExpression(expression.right);
+			}
+			return left ? left : this.evaluateExpression(expression.right);
+		}
+
 		const left = this.evaluateExpression(expression.left);
 		const right = this.evaluateExpression(expression.right);
 		switch (expression.operator) {
@@ -483,7 +508,6 @@ export class VerseInterpreter {
 			case '>=': return left >= right;
 			case '<=': return left <= right;
 			case 'and': return left && right;
-			case 'or': return left || right;
 			default:
 				throw new Error(`Unsupported binary operator: ${expression.operator}`);
 		}
@@ -549,7 +573,7 @@ export class VerseInterpreter {
 					throw new Error(`Array index for '${functionName}' must be an integer`);
 				}
 				if (index < 0 || index >= symbol.value.length) {
-					throw new Error(`Index out of bounds: ${index}`);
+					throw new VerseFailure(`Index out of bounds: ${index}`);
 				}
 
 				return symbol.value[index];
@@ -604,7 +628,10 @@ export class VerseInterpreter {
 			}
 
 			if ((functionDef.effects || []).includes('decides')) {
-				return Boolean(this.lastExpressionValue);
+				if (!this.lastExpressionValue) {
+					throw new VerseFailure(`${functionName} failed`);
+				}
+				return this.lastExpressionValue;
 			}
 
 			return this.lastExpressionValue;
