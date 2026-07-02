@@ -190,6 +190,252 @@ hello_world_device := class(creative_device):
 });
 
 
+describe('if and conditional expressions', () => {
+	it('evaluates if / else baseline', () => {
+		const source = `
+using { /Fortnite.com/Devices }
+using { /Verse.org/Simulation }
+
+hello_world_device := class(creative_device):
+
+    OnBegin<override>()<suspends>:void=
+        if (10 > 5):
+            Print("if branch")
+        else:
+            Print("else branch")
+`;
+
+		const expected = [
+			'if branch',
+			'',
+		].join('\n');
+
+		expect(runInterpreterOnly(source)).toBe(expected);
+	});
+
+
+	it('evaluates an inline if-then statement without an else', () => {
+		const source = `
+using { /Fortnite.com/Devices }
+using { /Verse.org/Simulation }
+
+hello_world_device := class(creative_device):
+
+    OnBegin<override>()<suspends>:void=
+        if (10 > 5) then:
+            Print("then branch")
+`;
+
+		const expected = [
+			'then branch',
+			'',
+		].join('\n');
+
+		expect(runInterpreterOnly(source)).toBe(expected);
+	});
+
+
+	it('evaluates an inline if-then-else statement', () => {
+		const source = `
+using { /Fortnite.com/Devices }
+using { /Verse.org/Simulation }
+
+hello_world_device := class(creative_device):
+
+    OnBegin<override>()<suspends>:void=
+        if (10 > 5) then:
+            Print("then branch")
+        else:
+            Print("else branch")
+`;
+
+		const expected = [
+			'then branch',
+			'',
+		].join('\n');
+
+		expect(runInterpreterOnly(source)).toBe(expected);
+	});
+
+
+	it('evaluates a multi-branch else-if chain', () => {
+		const source = `
+using { /Fortnite.com/Devices }
+using { /Verse.org/Simulation }
+
+hello_world_device := class(creative_device):
+
+    OnBegin<override>()<suspends>:void=
+        if (10 < 5):
+            Print("first if")
+        else if (10 < 8):
+            Print("else if")
+        else:
+            Print("final else")
+`;
+
+		const expected = [
+			'final else',
+			'',
+		].join('\n');
+
+		expect(runInterpreterOnly(source)).toBe(expected);
+	});
+
+
+	it('evaluates multi-branch logic via a nested if-else', () => {
+		const source = `
+using { /Fortnite.com/Devices }
+using { /Verse.org/Simulation }
+
+hello_world_device := class(creative_device):
+
+    OnBegin<override>()<suspends>:void=
+        if (10 < 5):
+            Print("first if")
+        else:
+            if (10 < 8):
+                Print("nested else-if")
+            else:
+                Print("final else")
+`;
+
+		const expected = [
+			'final else',
+			'',
+		].join('\n');
+
+		expect(runInterpreterOnly(source)).toBe(expected);
+	});
+
+	it('evaluates block-structured if-then-else clauses', () => {
+		const source = `
+using { /Fortnite.com/Devices }
+using { /Verse.org/Simulation }
+
+hello_world_device := class(creative_device):
+
+    OnBegin<override>()<suspends>:void=
+        if:
+            10 > 5
+        then:
+            Print("then branch")
+        else:
+            Print("else branch")
+`;
+
+		const expected = [
+			'then branch',
+			'',
+		].join('\n');
+
+		expect(runInterpreterOnly(source)).toBe(expected);
+	});
+
+	it('evaluates inline conditional blocks using curly braces', () => {
+		const source = `
+using { /Fortnite.com/Devices }
+using { /Verse.org/Simulation }
+
+hello_world_device := class(creative_device):
+
+    OnBegin<override>()<suspends>:void=
+        if (10 > 5) {
+            Print("if branch")
+        } else {
+            Print("else branch")
+        }
+`;
+
+		const expected = [
+			'if branch',
+			'',
+		].join('\n');
+
+		expect(runInterpreterOnly(source)).toBe(expected);
+	});
+
+
+	it('evaluates curly brace conditionals in Allman style', () => {
+		const source = `
+using { /Fortnite.com/Devices }
+using { /Verse.org/Simulation }
+
+hello_world_device := class(creative_device):
+
+    OnBegin<override>()<suspends>:void=
+        if (10 > 5)
+        {
+            Print("if branch")
+        }
+        else
+        {
+            Print("else branch")
+        }
+`;
+
+		const expected = [
+			'if branch',
+			'',
+		].join('\n');
+
+		expect(runInterpreterOnly(source)).toBe(expected);
+	});
+
+
+	it('evaluates an inline curly brace block paired with then', () => {
+		const source = `
+using { /Fortnite.com/Devices }
+using { /Verse.org/Simulation }
+
+hello_world_device := class(creative_device):
+
+    OnBegin<override>()<suspends>:void=
+        if (10 > 5) then {
+            Print("then branch")
+        }   
+        else {
+            Print("else branch")
+        }
+`;
+
+		const expected = [
+			'then branch',
+			'',
+		].join('\n');
+
+		expect(runInterpreterOnly(source)).toBe(expected);
+	});
+
+
+	it('evaluates an else-if chain with a variable condition', () => {
+		const source = `
+using { /Fortnite.com/Devices }
+using { /Verse.org/Simulation }
+using { /UnrealEngine.com/Temporary/Diagnostics }
+
+hello_world_device := class(creative_device):
+
+    OnBegin<override>()<suspends>:void=
+        var x : int = 20
+        if (x > 10):
+            Print("x > 10")
+        else if (x > 5):
+            Print("x > 5")
+        else:
+            Print("x <= 5")
+`;
+
+		const expected = [
+			'x > 10',
+			'',
+		].join('\n');
+
+		expect(runInterpreterOnly(source)).toBe(expected);
+	});
+});
+
+
 describe('control flow', () => {
 	it('evaluates a loop with a break statement', () => {
 		const source = `
