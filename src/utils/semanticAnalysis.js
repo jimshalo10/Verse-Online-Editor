@@ -442,11 +442,12 @@ function ensureFailureContextForArrayAccess(expression, scope, failureContext) {
 
 function ensureFailureContextForFailableInvocation(expression, scope, failureContext) {
 	const symbol = scope.lookup(expression.name.name);
-	if (!isArraySymbol(symbol) && !isDecidesFunctionSymbol(symbol)) {
+	const isArray = isArraySymbol(symbol);
+	if (!isArray && !isDecidesFunctionSymbol(symbol)) {
 		return;
 	}
 
-	if (failureContext && expression.usesBrackets) {
+	if (failureContext && (!isArray || expression.usesBrackets)) {
 		return;
 	}
 

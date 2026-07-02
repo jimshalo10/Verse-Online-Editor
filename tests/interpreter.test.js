@@ -826,4 +826,60 @@ hello_world_device := class(creative_device):
 
 		expect(run(source)).toBe(expected);
 	});
+
+	it('evaluates built-in Floor and Mod functions', () => {
+		const source = `
+using { /Fortnite.com/Devices }
+using { /Verse.org/Simulation }
+using { /UnrealEngine.com/Temporary/Diagnostics }
+
+hello_world_device := class(creative_device):
+
+    OnBegin<override>()<suspends>:void=
+        var MyInt : int = 11
+
+        if (NewValue := Floor[4.0 / 2.0]):
+            set MyInt = NewValue
+            Print("MyInt is now {MyInt}")
+        
+        if (ModResult := Mod[10, 3]):
+            Print("Modulo result: {ModResult}")
+`;
+
+		const expected = [
+			'MyInt is now 2',
+			'Modulo result: 1',
+			'',
+		].join('\n');
+
+		expect(run(source)).toBe(expected);
+	});
+
+	it('allows a decides function call to use parentheses instead of brackets in a failure context', () => {
+		const source = `
+using { /Fortnite.com/Devices }
+using { /Verse.org/Simulation }
+using { /UnrealEngine.com/Temporary/Diagnostics }
+
+hello_world_device := class(creative_device):
+
+    OnBegin<override>()<suspends>:void=
+        var MyInt : int = 11
+
+        if (NewValue := Floor(MyInt / 2)):
+            set MyInt = NewValue
+            Print("MyInt is now {MyInt}")
+        
+        if (ModResult := Mod[10, 3]):
+            Print("Modulo result: {ModResult}")
+`;
+
+		const expected = [
+			'MyInt is now 5',
+			'Modulo result: 1',
+			'',
+		].join('\n');
+
+		expect(run(source)).toBe(expected);
+	});
 });
