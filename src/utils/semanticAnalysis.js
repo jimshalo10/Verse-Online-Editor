@@ -483,8 +483,7 @@ function resolveBinaryExpressionType(expression, scope) {
 		}
 		case '+':
 		case '-':
-		case '*':
-		case '/': {
+		case '*': {
 			const leftType = resolveExpressionType(expression.left, scope);
 			const rightType = resolveExpressionType(expression.right, scope);
 			if (leftType?.name === 'float' || rightType?.name === 'float') {
@@ -492,6 +491,17 @@ function resolveBinaryExpressionType(expression, scope) {
 			}
 			if (leftType?.name === 'int' && rightType?.name === 'int') {
 				return { kind: 'primitive', name: 'int' };
+			}
+			return null;
+		}
+		case '/': {
+			const leftType = resolveExpressionType(expression.left, scope);
+			const rightType = resolveExpressionType(expression.right, scope);
+			if (leftType?.name === 'int' && rightType?.name === 'int') {
+				return { kind: 'primitive', name: 'rational' };
+			}
+			if (leftType?.name === 'float' || rightType?.name === 'float') {
+				return { kind: 'primitive', name: 'float' };
 			}
 			return null;
 		}

@@ -391,7 +391,7 @@ ArrayAccess
 
 
 Type
-  = name:$("float" / "int" / "string" / "logic" / "void") { 
+  = name:$("float" / "int" / "rational" / "string" / "logic" / "void") {
       console.log("Captured Type: ", name);
       return { type: "Type", name };
    }

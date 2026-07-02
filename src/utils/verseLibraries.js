@@ -1,6 +1,6 @@
 import { VerseFailure } from './verseFailure.js';
 
-function createNativeFunction(name, parameters, returnType, invoke, effects = []) {
+function createNativeFunction(name, parameters, returnType, invoke, effects = [], overloads = null) {
 	return {
 		metadata: {
 			type: 'NativeFunction',
@@ -8,6 +8,7 @@ function createNativeFunction(name, parameters, returnType, invoke, effects = []
 			parameters,
 			returnType,
 			effects,
+			overloads,
 		},
 		runtime: {
 			invoke,
@@ -85,6 +86,11 @@ const VERSE_LIBRARY_REGISTRY = {
 				'int',
 				value => convertFailableFloatToInt('Floor', value, Math.floor),
 				['decides'],
+				[
+					{ parameterTypes: ['int'], returnType: 'int', effects: [] },
+					{ parameterTypes: ['rational'], returnType: 'int', effects: [] },
+					{ parameterTypes: ['float'], returnType: 'int', effects: ['decides'] },
+				],
 			),
 			Ceil: createNativeFunction(
 				'Ceil',
@@ -117,6 +123,19 @@ const VERSE_LIBRARY_REGISTRY = {
 					}
 
 					return ((dividend % divisor) + divisor) % divisor;
+				},
+				['decides'],
+			),
+			Quotient: createNativeFunction(
+				'Quotient',
+				['int', 'int'],
+				'int',
+				(dividend, divisor) => {
+					if (divisor === 0) {
+						throw new VerseFailure(`Quotient[${dividend}, ${divisor}] failed: division by zero`);
+					}
+
+					return Math.trunc(dividend / divisor);
 				},
 				['decides'],
 			),
