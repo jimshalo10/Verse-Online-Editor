@@ -37,7 +37,7 @@ $ cd Verse-Online-Editor
 ```
 If you don't have Node.js installed, download and install it from [nodejs.org](https://nodejs.org/).
 
-Download the Visual Studio Code editor Mongo
+Download the Visual Studio Code editor Monaco
 - [<img src="https://github.com/user-attachments/assets/63dab2fd-6095-46a1-88f6-9a4dc97e2edb" height="27.99" />](https://microsoft.github.io/monaco-editor/)
 - 
 For your GitHub Forked repository, open GitBash and navigate to the project directory
