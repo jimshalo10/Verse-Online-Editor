@@ -36,14 +36,20 @@ $ git clone https://github.com/johanfortus/Verse-Online-Editor/
 $ cd Verse-Online-Editor
 ```
 
+Open GitBash at the $ prompt type the following commands to navigate to the project directory
+```
+pwd
+cd source/repos/Verse-Online-Editor
+```
+
 Install dependencies
 ```
-$ npm i
+npm install
 ```
 
 Generate the parser from the PEG.js grammar
 ```
-$ npx peggy --format es -o src/utils/parser.js src/language/verse-grammar.pegjs
+npx peggy --format es -o src/utils/parser.js src/language/verse-grammar.pegjs
 ```
 
 Start the development server
