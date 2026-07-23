@@ -35,6 +35,20 @@ Clone the repository to your local machine
 $ git clone https://github.com/johanfortus/Verse-Online-Editor/
 $ cd Verse-Online-Editor
 ```
+If you don't have Node.js installed, download and install it from [nodejs.org](https://nodejs.org/).
+
+Download the Visual Studio Code editor Mongo
+- [<img src="https://github.com/user-attachments/assets/63dab2fd-6095-46a1-88f6-9a4dc97e2edb" height="27.99" />](https://microsoft.github.io/monaco-editor/)
+- 
+For your GitHub Forked repository, open GitBash and navigate to the project directory
+```
+git clone https://github.com/GitHubUsername/Verse-Online-Editor/
+
+
+```
+You can also download the repository as a Visual Studio Green Code "Open with Visual Studio" and select
+
+Clone Repository this will be extracted in to your desired location.
 
 Open GitBash at the $ prompt type the following commands to navigate to the project directory
 ```
@@ -54,8 +68,11 @@ npx peggy --format es -o src/utils/parser.js src/language/verse-grammar.pegjs
 
 Start the development server
 ```
-$ npm run dev
+cd C:\Users\%USERNAME%\source\repos\Verse-Online-Editor
+ npm run dev
 ```
+Press "o + enter" to open in browser to get the Verse Online Editor running at http://localhost:5173
+
 
 ## 💻 Built With
 - [<img src="https://img.shields.io/badge/javascript-%23F7DF1E.svg?&style=for-the-badge&logo=javascript&logoColor=black" />](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
